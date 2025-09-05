@@ -7,24 +7,39 @@ const path = require('path');
 const program = new Command();
 
 // --- Placeholder for LLM Interaction ---
+const { Command } = require('commander');
+const fs = require('fs');
+const path = require('path');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+const program = new Command();
+
+// --- LLM Interaction ---
 async function callLl(prompt, model) {
   console.log(`--- Calling LLM '${model}' ---`);
-  // In a real implementation, this would use a library like axios or node-fetch
-  // to make an API call to the specified model's endpoint.
-  // It would also retrieve the API key from environment variables.
-  // const apiKey = process.env[`${model.toUpperCase()}_API_KEY`];
-  // if (!apiKey) {
-  //   console.error(`Error: API key for model '${model}' not found in environment variables.`);
-  //   process.exit(1);
-  // }
 
-  // For now, simulate a response for testing purposes.
-  if (prompt.includes('limpio, sin comentarios')) {
-    return 'Este es el texto limpio y procesado por el modelo.';
-  } else if (prompt.includes('Coinciden sustancialmente')) {
-    return 'Coinciden sustancialmente';
+  if (model === 'gemini') {
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error('GEMINI_API_KEY environment variable not set.');
+      }
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const geminiModel = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+      const result = await geminiModel.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      console.log('--- LLM Call Complete ---');
+      return text;
+    } catch (error) {
+      console.error(`Error calling Gemini API: ${error.message}`);
+      process.exit(1);
+    }
+  } else {
+    console.error(`Model '${model}' is not supported in this implementation.`);
+    process.exit(1);
   }
-  return 'Respuesta genérica del modelo.';
 }
 
 program
