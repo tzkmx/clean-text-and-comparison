@@ -1,0 +1,10 @@
+Compara estos dos textos y responde solo con:
+- Coinciden sustancialmente
+- No coinciden sustancialmente
+Si no coinciden, lista brevemente las 3 diferencias más relevantes.
+
+TEXTO A:
+{{texto_a}}
+
+TEXTO B:
+{{texto_b}}

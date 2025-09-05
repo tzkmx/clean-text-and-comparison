@@ -1,0 +1,14 @@
+Analiza y compara Texto A (limpio) con Texto B (referencia).
+Clasifica diferencias en:
+1) Tipográficos/formato
+2) Abreviaturas sin cambio de sentido
+3) Omisiones/adiciones
+4) Cambios sustanciales
+Devuelve tabla: Categoría | Descripción | Texto en A | Texto en B
+Cierra con veredicto: “Coinciden sustancialmente” o “No coinciden sustancialmente”.
+
+TEXTO A:
+{{texto_a}}
+
+TEXTO B:
+{{texto_b}}

@@ -1,0 +1,12 @@
+Recibirás un texto extraído mediante OCR que puede contener errores de reconocimiento...
+1. Corrige ortografía y gramática evidentes.
+2. Elimina encabezados repetitivos, números de página y elementos ajenos.
+3. Unifica párrafos que pertenezcan a la misma idea.
+4. Elimina saltos de línea innecesarios.
+5. Corrige espaciado y puntuación.
+6. Mantén significado y tono original.
+7. Preserva listas, títulos y estructura lógica.
+Devuelve únicamente el texto limpio, sin comentarios.
+
+TEXTO OCR:
+{{texto_ocr}}
