@@ -1,0 +1,7 @@
+Este es un texto de prrueba con algunos errrores de OCR.
+
+PAG. 1
+
+El parrafo continua aqui, pero con un salto de linea innecesario.
+
+FIN DEL DOCUMENTO
