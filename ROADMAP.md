@@ -35,3 +35,69 @@ The foundational first step is to refactor the current monolithic `index.js` scr
     -   The `.action()` handlers will become simple one-line calls that delegate to the core module, passing the necessary options.
 
 **Benefit:** The `src/core.js` module becomes a self-contained library. The CLI is just one consumer. The Express.js API will be another, preventing code duplication and improving maintainability.
+
+---
+
+## Phase 2: API Layer with Express.js
+
+With a modular core, we can expose the functionality over a web API.
+
+**Objective:** Allow programmatic access to the text processing services over HTTP.
+
+### Dependencies
+-   `express`: The web server framework.
+-   `cors`: Middleware to enable Cross-Origin Resource Sharing for front-end applications.
+
+### API Endpoint Design
+
+-   **`POST /api/clean`**
+    -   **Request Body:** `{ "text": "...", "model": "...", "authMode": "..." }`
+    -   **Response Body:** `{ "cleanedText": "..." }`
+
+-   **`POST /api/compare`**
+    -   **Request Body:** `{ "textA": "...", "textB": "...", "type": "quick|detailed", ... }`
+    -   **Response Body:** `{ "result": "..." }`
+
+---
+
+## Phase 3: Event Sourcing with Markdown
+
+To create a complete audit trail, all core operations will be logged as individual events.
+
+**Objective:** Create an immutable, human-readable log of every significant action the system performs.
+
+### Trigger Point
+-   Logging will be initiated from within the core module functions (`executeClean`, `executeCompare`) after a successful operation. This ensures all UIs (CLI, API) generate events automatically.
+
+### Directory Structure
+-   A new top-level `/events` directory will be created.
+-   Events will be organized by type and date: `events/<type>/<YYYY-MM-DD>/<timestamp>-<id>.md`.
+
+### Event File Format
+-   Each event is a Markdown file with a YAML Frontmatter header for structured metadata and a Markdown body for the payload.
+-   **Metadata Example:**
+    ```yaml
+    ---
+    id: "evt_20250905_163000_a4f8"
+    timestamp: "2025-09-05T16:30:00.123Z"
+    eventType: "text.cleaned"
+    sourceUI: "api"
+    status: "success"
+    processingMetadata:
+      model: "gemini"
+      authMode: "api"
+      processingTimeMs: 1234
+    ---
+    ```
+-   **Body Example:**
+    ```markdown
+    # Event: Text Cleaned
+
+    ## Input
+
+    The raw input text...
+
+    ## Output
+
+    The processed output text...
+    ```
