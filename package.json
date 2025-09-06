@@ -1,11 +1,15 @@
 {
-  "name": "clean-text",
+  "name": "clean-text-cli",
   "version": "1.0.0",
-  "description": "",
+  "description": "A CLI tool to clean OCR text and compare documents using LLMs.",
   "main": "index.js",
+  "bin": {
+    "clean-text-cli": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+}
   "keywords": [],
   "author": "",
   "license": "ISC",
