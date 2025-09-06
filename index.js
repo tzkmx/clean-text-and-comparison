@@ -15,7 +15,7 @@ async function callLl(prompt, model, authMode) {
   if (authMode === 'cli') {
     // Use external CLI tool
     return new Promise((resolve, reject) => {
-      const cliProcess = spawn('gemini-cli', ['--prompt', prompt], { shell: true });
+      const cliProcess = spawn('gemini', [], { shell: true });
       let stdout = '';
       let stderr = '';
 
@@ -43,6 +43,9 @@ async function callLl(prompt, model, authMode) {
         console.error(errorMessage);
         reject(new Error(errorMessage));
       });
+
+      cliProcess.stdin.write(prompt);
+      cliProcess.stdin.end();
     });
   } else if (authMode === 'api') {
     // Use direct API call
