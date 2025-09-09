@@ -30,3 +30,9 @@ The agreed-upon strategy is a phased evolution to manage complexity while delive
 4.  **Phase 4 (Maturity):** Fully adopt Nest.js idioms (Dependency Injection, Services) and migrate the simple event store to a robust database solution (e.g., PostgreSQL) using full CQRS/ES patterns.
 
 By referencing these documents, future sessions can quickly gain the necessary context to make effective and consistent contributions.
+
+## 4. Important Note on Test Data
+
+The `test-cases/` directory is present in the developer's local environment for testing purposes but is excluded from the repository via `.gitignore`. It contains files with personal and sensitive information and **must not be committed** to the repository under any circumstances.
+
+**Rule for AI Assistants:** Before any commit operation, always verify that the `test-cases/` directory is not staged. If it is, you must unstage it before proceeding with the commit. Do not ask for confirmation to do this, it is a mandatory step.
