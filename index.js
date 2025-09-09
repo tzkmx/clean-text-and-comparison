@@ -58,7 +58,7 @@ async function callLl(prompt, model, authMode) {
         throw new Error('GEMINI_API_KEY environment variable not set for API mode.');
       }
       const genAI = new GoogleGenerativeAI(apiKey);
-      const geminiModel = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      const geminiModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
       const result = await geminiModel.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
@@ -83,7 +83,7 @@ program
   .command('clean')
   .description('Clean an OCR text file.')
   .argument('<inputFile>', 'Path to the input OCR text file.')
-  .argument('<outputFile>', 'Path to save the cleaned text file.')
+  .argument('[outputFile]', 'Path to save the cleaned text file. Defaults to <inputFile>-cleaned.<ext>')
   .option('--model <name>', 'LLM to use (e.g., gemini, claude)', 'gemini')
   .action(async (inputFile, outputFile, options) => {
     console.log(`Starting 'clean' operation...`);
@@ -100,14 +100,20 @@ program
         process.exit(1);
       }
 
+      let finalOutputFile = outputFile;
+      if (!finalOutputFile) {
+        const { dir, name, ext } = path.parse(inputFile);
+        finalOutputFile = path.join(dir, `${name}-cleaned${ext}`);
+      }
+
       const ocrText = fs.readFileSync(inputFile, 'utf-8');
       const promptTemplate = fs.readFileSync(promptPath, 'utf-8');
       const finalPrompt = promptTemplate.replace('{{texto_ocr}}', ocrText);
 
       const cleanedText = await callLl(finalPrompt, options.model, globalOptions.authMode);
 
-      fs.writeFileSync(outputFile, cleanedText, 'utf-8');
-      console.log(`Success! Cleaned text saved to: ${outputFile}`);
+      fs.writeFileSync(finalOutputFile, cleanedText, 'utf-8');
+      console.log(`Success! Cleaned text saved to: ${finalOutputFile}`);
     } catch (e) {
       console.error(`An unexpected error occurred: ${e.message}`);
       process.exit(1);

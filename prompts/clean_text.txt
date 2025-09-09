@@ -1,12 +1,29 @@
-Recibirás un texto extraído mediante OCR que puede contener errores de reconocimiento...
-1. Corrige ortografía y gramática evidentes.
-2. Elimina encabezados repetitivos, números de página y elementos ajenos.
-3. Unifica párrafos que pertenezcan a la misma idea.
-4. Elimina saltos de línea innecesarios.
-5. Corrige espaciado y puntuación.
-6. Mantén significado y tono original.
-7. Preserva listas, títulos y estructura lógica.
-Devuelve únicamente el texto limpio, sin comentarios.
+Recibirás un texto extraído mediante OCR que puede contener errores de reconocimiento. Tu tarea es limpiarlo siguiendo estas reglas:
+
+1.  **Extraer Número Único de Documento**:
+    *   Busca en el texto un patrón similar a "N(ú|u)mero (ú|u)nico de Documento".
+    *   El código que buscamos suele estar en la línea justo anterior, al final de la misma, repetido en cada encabezado de página. Es un código alfanumérico (ej. "2000L", "100KC", "100Z8", "10066").
+    *   Si encuentras el código, el resultado debe comenzar con "Número Único de Documento: [código extraído]". Si no encuentras el patrón "N(ú|u)mero (ú|u)nico de Documento" en el texto, el resultado DEBE comenzar con "Número Único de Documento: N/A".
+
+2.  **Limpieza General del Cuerpo del Texto**:
+    *   Corrige errores evidentes de ortografía y gramática en el cuerpo principal del documento.
+    *   Unifica párrafos que claramente pertenecen a la misma idea y elimina saltos de línea innecesarios dentro de ellos.
+    *   Corrige espaciado y puntuación para mejorar la legibilidad.
+    *   Mantén el significado y el tono original del documento.
+    *   Preserva la estructura lógica como listas, títulos y secciones.
+    *   **Importante**: Conserva los números escritos con letra que se encuentren entre paréntesis, como `(dos mil quinientos cincuenta y cuatro)`.
+
+3.  **Manejo de Encabezados y Pies de Página Repetidos**:
+    *   Identifica y elimina todos los encabezados y pies de página que se repiten a lo largo del documento (como "Registro Público de Comercio", fechas, números de página, etc.), **excepto** la primera aparición del bloque de texto que contiene los datos de registro principal (usualmente al inicio).
+    *   Si encuentras textos de encabezado y pie de página repetidos, agrúpalos al final del documento.
+    *   Separa este bloque de textos repetidos del contenido principal con una línea de 13 guiones: `-------------`.
+    *   Si no se encuentran encabezados o pies de página repetidos, simplemente añade la línea separadora al final del texto limpio y nada más después de ella.
+
+4.  **Formato de Salida**:
+    *   El archivo debe empezar con el "Número Único de Documento".
+    *   A continuación, el cuerpo del texto limpio.
+    *   Finalmente, la línea separadora (`-------------`) seguida de los encabezados y pies de página repetidos (si los hay).
+    *   No incluyas comentarios ni explicaciones en tu respuesta, solo el texto procesado.
 
 TEXTO OCR:
 {{texto_ocr}}
