@@ -22,12 +22,12 @@ Once installed, you can use the `clean-text-cli` command directly from your term
 ### Clean Text
 
 ```bash
-clean-text-cli clean <inputFile> <outputFile> --auth-mode <api|cli>
+clean-text-cli clean <inputFile> <outputFile> --auth-mode <cli|api>
 ```
 
 -   `<inputFile>`: Path to the input OCR text file.
 -   `<outputFile>`: Path to save the cleaned text file.
--   `--auth-mode`: (Optional) `api` for Google API key, `cli` for `gemini-cli`. Defaults to `api`.
+-   `--auth-mode`: (Optional) `cli` for `gemini-cli`, `api` for Google API key. Defaults to `cli`.
 
 ### Compare Files
 

@@ -77,7 +77,7 @@ program
   .name('clean-text-cli')
   .description('CLI tool to clean OCR text and compare documents using LLMs.')
   .version('1.0.0')
-  .option('--auth-mode <mode>', 'Authentication mode: "api" for direct key, "cli" for external CLI', 'api');
+  .option('--auth-mode <mode>', 'Authentication mode: "api" for direct key, "cli" for external CLI', 'cli');;
 
 program
   .command('clean')
