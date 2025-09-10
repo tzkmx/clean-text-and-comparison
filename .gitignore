@@ -97,4 +97,4 @@ typings/
 .vscode-test
 
 # Custom tests
-test-cases/
+# test-cases/

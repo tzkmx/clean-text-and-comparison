@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# This pre-commit hook prevents committing files from the 'logs' and 'sql-logs' directories.
+
+# Get the list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=A)
+
+# Check if any staged file is in the forbidden directories
+if echo "$STAGED_FILES" | grep -q -E '^(test-cases/)'; then
+    echo "ERROR: Attempting to commit files from 'test-cases/'." >&2
+    echo "These directories are excluded from commits by a pre-commit hook." >&2
+    echo "Please unstage these files to proceed." >&2
+    exit 1
+fi
+
+exit 0
