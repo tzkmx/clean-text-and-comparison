@@ -8,6 +8,49 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const program = new Command();
 
+// --- Invocation Logging ---
+function logInvocation(command, startTime, endTime, files, result) {
+  const logDir = path.join(__dirname, 'logs', command);
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
+
+  const invocationId = new Date().toISOString().replace(/:/g, '-');
+  const invocationPath = path.join(logDir, invocationId);
+  fs.mkdirSync(invocationPath, { recursive: true });
+
+  const logData = {
+    command,
+    invocationId,
+    startTime,
+    endTime,
+    duration: endTime - startTime,
+    files,
+    invocationCommand: process.argv.join(' '),
+  };
+
+  fs.writeFileSync(path.join(invocationPath, 'log.json'), JSON.stringify(logData, null, 2), 'utf-8');
+
+  files.forEach(file => {
+    if (fs.existsSync(file)) {
+      fs.copyFileSync(file, path.join(invocationPath, path.basename(file)));
+    }
+  });
+
+  if (result) {
+    if (command.startsWith('compare')) {
+      fs.writeFileSync(path.join(invocationPath, 'comparison_result.txt'), result, 'utf-8');
+    } else if (command === 'clean' && files.length > 1) {
+        const outputFile = files[1];
+        if (fs.existsSync(outputFile)) {
+            fs.copyFileSync(outputFile, path.join(invocationPath, path.basename(outputFile)));
+        }
+    }
+  }
+  
+  console.log(`--- Invocation logged to: ${invocationPath} ---`);
+}
+
 // --- LLM Interaction ---
 async function callLl(prompt, model, authMode) {
   console.log(`--- Calling LLM '${model}' using auth mode: ${authMode} ---`);
@@ -86,6 +129,7 @@ program
   .argument('[outputFile]', 'Path to save the cleaned text file. Defaults to <inputFile>-cleaned.<ext>')
   .option('--model <name>', 'LLM to use (e.g., gemini, claude)', 'gemini')
   .action(async (inputFile, outputFile, options) => {
+    const startTime = new Date();
     console.log(`Starting 'clean' operation...`);
     try {
       const globalOptions = program.opts();
@@ -114,8 +158,13 @@ program
 
       fs.writeFileSync(finalOutputFile, cleanedText, 'utf-8');
       console.log(`Success! Cleaned text saved to: ${finalOutputFile}`);
+
+      const endTime = new Date();
+      logInvocation('clean', startTime, endTime, [inputFile, finalOutputFile]);
     } catch (e) {
       console.error(`An unexpected error occurred: ${e.message}`);
+      const endTime = new Date();
+      logInvocation('clean', startTime, endTime, [inputFile, outputFile], e.message);
       process.exit(1);
     }
   });
@@ -130,6 +179,7 @@ compareCommand
     .argument('<fileB>', 'Path to the second file.')
     .option('--model <name>', 'LLM to use', 'gemini')
     .action(async (fileA, fileB, options) => {
+        const startTime = new Date();
         console.log(`Starting 'compare-quick' operation...`);
         try {
             const globalOptions = program.opts();
@@ -153,8 +203,13 @@ compareCommand
             console.log('\n--- Comparison Result ---');
             console.log(result);
             console.log('-------------------------\n');
+
+            const endTime = new Date();
+            logInvocation('compare-quick', startTime, endTime, [fileA, fileB], result);
         } catch (e) {
             console.error(`An unexpected error occurred: ${e.message}`);
+            const endTime = new Date();
+            logInvocation('compare-quick', startTime, endTime, [fileA, fileB], e.message);
             process.exit(1);
         }
     });
@@ -166,6 +221,7 @@ compareCommand
     .argument('<fileB>', 'Path to the second file.')
     .option('--model <name>', 'LLM to use', 'gemini')
     .action(async (fileA, fileB, options) => {
+        const startTime = new Date();
         console.log(`Starting 'compare-detailed' operation...`);
         try {
             const globalOptions = program.opts();
@@ -189,8 +245,13 @@ compareCommand
             console.log('\n--- Comparison Result ---');
             console.log(result);
             console.log('-------------------------\n');
+
+            const endTime = new Date();
+            logInvocation('compare-detailed', startTime, endTime, [fileA, fileB], result);
         } catch (e) {
             console.error(`An unexpected error occurred: ${e.message}`);
+            const endTime = new Date();
+            logInvocation('compare-detailed', startTime, endTime, [fileA, fileB], e.message);
             process.exit(1);
         }
     });
