@@ -130,6 +130,11 @@ program
   .option('--model <name>', 'LLM to use (e.g., gemini, claude)', 'gemini')
   .action(async (inputFile, outputFile, options) => {
     const startTime = new Date();
+    let finalOutputFile = outputFile;
+    if (!finalOutputFile) {
+      const { dir, name, ext } = path.parse(inputFile);
+      finalOutputFile = path.join(dir, `${name}-cleaned${ext}`);
+    }
     console.log(`Starting 'clean' operation...`);
     try {
       const globalOptions = program.opts();
@@ -142,12 +147,6 @@ program
       if (!fs.existsSync(promptPath)) {
         console.error(`Error: Prompt file not found at '${promptPath}'`);
         process.exit(1);
-      }
-
-      let finalOutputFile = outputFile;
-      if (!finalOutputFile) {
-        const { dir, name, ext } = path.parse(inputFile);
-        finalOutputFile = path.join(dir, `${name}-cleaned${ext}`);
       }
 
       const ocrText = fs.readFileSync(inputFile, 'utf-8');
@@ -164,7 +163,7 @@ program
     } catch (e) {
       console.error(`An unexpected error occurred: ${e.message}`);
       const endTime = new Date();
-      logInvocation('clean', startTime, endTime, [inputFile, outputFile], e.message);
+      logInvocation('clean', startTime, endTime, [inputFile, finalOutputFile], e.message);
       process.exit(1);
     }
   });
@@ -180,6 +179,7 @@ compareCommand
     .option('--model <name>', 'LLM to use', 'gemini')
     .action(async (fileA, fileB, options) => {
         const startTime = new Date();
+        const files = [fileA, fileB];
         console.log(`Starting 'compare-quick' operation...`);
         try {
             const globalOptions = program.opts();
@@ -205,11 +205,11 @@ compareCommand
             console.log('-------------------------\n');
 
             const endTime = new Date();
-            logInvocation('compare-quick', startTime, endTime, [fileA, fileB], result);
+            logInvocation('compare-quick', startTime, endTime, files, result);
         } catch (e) {
             console.error(`An unexpected error occurred: ${e.message}`);
             const endTime = new Date();
-            logInvocation('compare-quick', startTime, endTime, [fileA, fileB], e.message);
+            logInvocation('compare-quick', startTime, endTime, files, e.message);
             process.exit(1);
         }
     });
@@ -222,6 +222,7 @@ compareCommand
     .option('--model <name>', 'LLM to use', 'gemini')
     .action(async (fileA, fileB, options) => {
         const startTime = new Date();
+        const files = [fileA, fileB];
         console.log(`Starting 'compare-detailed' operation...`);
         try {
             const globalOptions = program.opts();
@@ -247,11 +248,11 @@ compareCommand
             console.log('-------------------------\n');
 
             const endTime = new Date();
-            logInvocation('compare-detailed', startTime, endTime, [fileA, fileB], result);
+            logInvocation('compare-detailed', startTime, endTime, files, result);
         } catch (e) {
             console.error(`An unexpected error occurred: ${e.message}`);
             const endTime = new Date();
-            logInvocation('compare-detailed', startTime, endTime, [fileA, fileB], e.message);
+            logInvocation('compare-detailed', startTime, endTime, files, e.message);
             process.exit(1);
         }
     });
